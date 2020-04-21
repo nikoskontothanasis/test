@@ -25,7 +25,6 @@ pipeline {
       submoduleCfg: [], 
       userRemoteConfigs: [[credentialsId: 'gitvodafone', url: 'https://8aaefb5e201d292e85c3e9aac4534167e6a53804@github.vodafone.com/ConsumerIT-Javelin/R10_Core_App']]])
       }
-        }
         
         dir('checkout/ios') {
           script {
