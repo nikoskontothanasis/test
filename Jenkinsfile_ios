@@ -13,10 +13,11 @@ pipeline {
   
   stages {
     stage('Build iOS-App') {
+      steps {
+      
       dir('checkoutDir') {
        deleteDir()
       }
-      steps {
       checkout([
       $class: 'GitSCM', 
       branches: [[name: dev]], 
