@@ -1,0 +1,44 @@
+pipeline {
+  agent any
+   
+  options {
+    disableConcurrentBuilds()
+    timestamps()
+    timeout(time: 1, unit: 'HOURS')
+    preserveStashes(buildCount: 5)
+    disableResume()
+    //Skip the default checkout to clear the workspace first and then checkout in an "Initialize" stage.
+    skipDefaultCheckout()
+  }
+  
+  stages {
+    stage('Build iOS-App') {
+      
+      steps {
+          checkout([
+      $class: 'GitSCM', 
+      branches: [[name: ]], 
+      doGenerateSubmoduleConfigurations: false, 
+      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'checkoutDir']], 
+      submoduleCfg: [], 
+      userRemoteConfigs: [[credentialsId: 'VFES Github API token', url: params.REPO]]])
+      }
+        }
+        
+        dir('checkout/ios') {
+          script {
+            //build
+            withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
+             sh "xcodebuild -list -project 'VFApp.xcodeproj' -scheme 'VFApp' -destination 'generic/platform=iOS' -configuration Release PROVISIONING_PROFILE_SPECIFIER=VFAppADHocProvisioning CODE_SIGN_STYLE=Manual build"
+              
+              //archive workspace
+              sh "xcodebuild -scheme 'VFApp' archive -archivePath VFApp.xcarchive"
+              
+              //export the iOS app for distribution
+              sh "xcodebuild -exportArchive -archivePath 'VFApp.xcarchive' -exportOptionsPlist 'VFApp/Resources/Info.plist' -exportPath 'VFApp.ipa'"
+            }
+          }
+        } 
+      }
+    }
+  }
