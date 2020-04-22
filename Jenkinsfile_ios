@@ -13,23 +13,18 @@ pipeline {
   
   stages {
     stage('Build iOS-App') {
-      steps {
       
-      dir('checkoutDir') {
-       deleteDir()
-      }
-      checkout([
-      $class: 'GitSCM', 
-      branches: [[name: dev]], 
-      doGenerateSubmoduleConfigurations: false, 
-      extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'checkoutDir']], 
-      submoduleCfg: [], 
-      userRemoteConfigs: [[credentialsId: 'gitvodafone', url: 'https://8aaefb5e201d292e85c3e9aac4534167e6a53804@github.vodafone.com/ConsumerIT-Javelin/R10_Core_App']]])
-  
-        dir('checkout/ios') {
+      
+      steps {
+        cleanWs()
+        checkout([$class: 'GitSCM', branches: [[name: 'dev']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'gitvodafone', url: 'https://8aaefb5e201d292e85c3e9aac4534167e6a53804@github.vodafone.com/ConsumerIT-Javelin/R10_Core_App']]])
+        
+        
+        dir('ios') {
           script {
             //build
-            withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
+            //withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
+                
              sh "xcodebuild -list -project 'VFApp.xcodeproj' -scheme 'VFApp' -destination 'generic/platform=iOS' -configuration Release PROVISIONING_PROFILE_SPECIFIER=VFAppADHocProvisioning CODE_SIGN_STYLE=Manual build"
               
               //archive workspace
@@ -37,7 +32,7 @@ pipeline {
               
               //export the iOS app for distribution
               sh "xcodebuild -exportArchive -archivePath 'VFApp.xcarchive' -exportOptionsPlist 'VFApp/Resources/Info.plist' -exportPath 'VFApp.ipa'"
-            }
+            //}
           }
         } 
       }
