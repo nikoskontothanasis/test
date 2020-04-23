@@ -27,7 +27,7 @@ pipeline {
           sh 'rm -rf VFApp.xcworkspace'
           sh '/usr/local/bin/pod install'
             //build
-            //withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
+            withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
                 
              sh "xcodebuild -list -workspace 'VFApp.xcworkspace' -scheme 'VFApp' -destination 'generic/platform=iOS' -configuration Release PROVISIONING_PROFILE_SPECIFIER=VFApp-ADHoc-Provisioning CODE_SIGN_STYLE=Manual clean build"
               
@@ -35,8 +35,8 @@ pipeline {
               sh "xcodebuild -workspace 'VFApp.xcworkspace' -scheme 'VFApp' clean archive -archivePath VFApp.xcarchive"
               
               //export the iOS app for distribution
-              sh "xcodebuild -exportArchive -archivePath 'VFApp.xcarchive' -exportOptionsPlist 'VFApp/Resources/Info.plist' -exportProvisioningProfile 'VFApp-ADHoc-Provisioning' -exportPath 'VFApp.ipa'"
-            //}
+              sh "xcodebuild -exportArchive -archivePath 'VFApp.xcarchive' -exportOptionsPlist 'VFApp/Resources/Info.plist' -exportPath 'VFApp.ipa' -allowProvisioningUpdates"
+            }
           }
         } 
       }
