@@ -25,7 +25,7 @@ pipeline {
           sh 'rm -rf Podfile.lock'
           sh 'rm -rf Pods'
           sh 'rm -rf VFApp.xcworkspace'
-          sh 'pod install'
+          sh '/usr/local/bin/pod install'
             //build
             //withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
                 
