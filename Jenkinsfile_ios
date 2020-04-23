@@ -22,12 +22,14 @@ pipeline {
         
         dir('ios') {
           script {
-          sh 'pod init'
+          sh 'rm -rf Podfile.lock'
+          sh 'rm -rf Pods'
+          sh 'rm -rf VFApp.xcworkspace'
           sh 'pod install'
             //build
             //withCredentials([file(credentialsId: pipelineConfig.iosProvisioningProfile, variable: 'VFAppADHocProvisioningProfile')]) {
                 
-             sh "xcodebuild -list -workspace 'VFApp.xcworkspace' -scheme 'VFApp' -destination 'generic/platform=iOS' -configuration Release PROVISIONING_PROFILE_SPECIFIER=VFApp-ADHoc-Provisioning CODE_SIGN_STYLE=Manual build"
+             sh "xcodebuild -list -workspace 'VFApp.xcworkspace' -scheme 'VFApp' -destination 'generic/platform=iOS' -configuration Release PROVISIONING_PROFILE_SPECIFIER=VFApp-ADHoc-Provisioning CODE_SIGN_STYLE=Manual clean build"
               
               //archive workspace
               sh "xcodebuild -workspace 'VFApp.xcworkspace' -scheme 'VFApp' clean archive -archivePath VFApp.xcarchive"
