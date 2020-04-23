@@ -35,7 +35,7 @@ pipeline {
               sh "xcodebuild -workspace 'VFApp.xcworkspace' -scheme 'VFApp' clean archive -archivePath VFApp.xcarchive"
               
               //export the iOS app for distribution
-              sh "xcodebuild -exportArchive -archivePath 'VFApp.xcarchive' -exportOptionsPlist 'VFApp/Resources/Info.plist' -exportPath 'VFApp.ipa'"
+              sh "xcodebuild -exportArchive -archivePath 'VFApp.xcarchive' -exportOptionsPlist 'VFApp/Resources/Info.plist' -exportProvisioningProfile 'VFApp-ADHoc-Provisioning' -exportPath 'VFApp.ipa'"
             //}
           }
         } 
